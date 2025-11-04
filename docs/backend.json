@@ -6,42 +6,13 @@
       "type": "object",
       "description": "Represents a user within the LifeQuest RPG application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the User entity."
-        },
-        "username": {
-          "type": "string",
-          "description": "The user's chosen username for the app."
-        },
-        "email": {
-          "type": "string",
-          "description": "The user's email address.",
-          "format": "email"
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the user account was created.",
-          "format": "date-time"
-        },
-        "lastLogin": {
-          "type": "string",
-          "description": "Timestamp of the user's last login.",
-          "format": "date-time"
-        },
-        "profileId": {
-          "type": "string",
-          "description": "Reference to UserProfile. (Relationship: User 1:1 UserProfile)"
-        }
+        "id": { "type": "string", "description": "Unique identifier for the User entity." },
+        "username": { "type": "string", "description": "The user's chosen username for the app." },
+        "email": { "type": "string", "description": "The user's email address.", "format": "email" },
+        "createdAt": { "type": "string", "description": "Timestamp indicating when the user account was created.", "format": "date-time" },
+        "lastLogin": { "type": "string", "description": "Timestamp of the user's last login.", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "username",
-        "email",
-        "createdAt",
-        "lastLogin",
-        "profileId"
-      ]
+      "required": ["id", "username", "email", "createdAt", "lastLogin"]
     },
     "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -49,54 +20,192 @@
       "type": "object",
       "description": "Stores user profile information, including character details and settings.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the UserProfile entity."
-        },
-        "displayName": {
-          "type": "string",
-          "description": "The user's display name within the app."
-        },
-        "avatar": {
-          "type": "string",
-          "description": "URL or reference to the user's avatar image."
-        },
-        "level": {
-          "type": "number",
-          "description": "The user's current level in the game."
-        },
-        "xp": {
-          "type": "number",
-          "description": "The user's current experience points."
-        },
-        "coins": {
-          "type": "number",
-          "description": "The number of coins the user has."
-        },
-        "gems": {
-          "type": "number",
-          "description": "The number of gems the user has (premium currency)."
-        },
-        "timeZone": {
-          "type": "string",
-          "description": "The user's time zone."
-        },
-        "preferredLanguage": {
-          "type": "string",
-          "description": "The user's preferred language."
-        }
+        "id": { "type": "string", "description": "Unique identifier for the UserProfile entity." },
+        "displayName": { "type": "string", "description": "The user's display name within the app." },
+        "avatarUrl": { "type": "string", "description": "URL or reference to the user's avatar image." },
+        "gender": { "type": "string", "enum": ["male", "female", "other", "prefer-not-to-say"] },
+        "mbti": { "type": "string", "description": "User's MBTI personality type." },
+        "level": { "type": "number", "description": "The user's current level in the game." },
+        "xp": { "type": "number", "description": "The user's current experience points." },
+        "xpToNextLevel": { "type": "number" },
+        "health": { "type": "number" },
+        "maxHealth": { "type": "number" },
+        "coins": { "type": "number", "description": "The number of coins the user has." },
+        "gems": { "type": "number", "description": "The number of gems the user has (premium currency)." },
+        "skillPoints": { "type": "number" },
+        "streak": { "type": "number" },
+        "longestStreak": { "type": "number" },
+        "tasksCompleted": { "type": "number" },
+        "completionRate": { "type": "number" },
+        "memberSince": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "displayName",
-        "avatar",
-        "level",
-        "xp",
-        "coins",
-        "gems",
-        "timeZone",
-        "preferredLanguage"
-      ]
+      "required": ["id", "displayName", "avatarUrl", "level", "xp", "coins", "gems"]
+    },
+    "SkillTree": {
+      "title": "SkillTree",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "enum": ["Physical", "Mental", "Life Skills"] },
+        "description": { "type": "string" },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "level": { "type": "number" },
+              "maxLevel": { "type": "number" },
+              "description": { "type": "string" },
+              "cost": { "type": "number" }
+            },
+            "required": ["name", "level", "maxLevel", "cost"]
+          }
+        }
+      }
+    },
+    "Item": {
+      "title": "Item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["Weapon", "Armor", "Helmet", "Shield", "Collectible"] },
+        "bonus": { "type": "string" },
+        "rarity": { "type": "string", "enum": ["Common", "Rare", "Epic", "Legendary"] }
+      },
+      "required": ["id", "name", "type", "rarity"]
+    },
+    "Equipment": {
+      "title": "Equipment",
+      "type": "object",
+      "properties": {
+        "weapon": { "$ref": "#/backend/entities/Item" },
+        "armor": { "$ref": "#/backend/entities/Item" },
+        "helmet": { "$ref": "#/backend/entities/Item" },
+        "shield": { "$ref": "#/backend/entities/Item" }
+      }
+    },
+    "Task": {
+      "title": "Task",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["Easy", "Medium", "Hard", "N/A"] },
+        "type": { "type": "string", "enum": ["Daily", "Weekly", "Monthly", "One-time"] },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "completed": { "type": "boolean" },
+        "xp": { "type": "number" },
+        "coins": { "type": "number" },
+        "streak": { "type": "number" },
+        "lastCompleted": { "type": "string", "format": "date-time" },
+        "intention": { "type": "string" },
+        "pomodoros": { "type": "number" },
+        "pomodorosCompleted": { "type": "number" }
+      },
+      "required": ["id", "title", "category", "difficulty", "type", "completed", "xp", "coins"]
+    },
+    "Boss": {
+      "title": "Boss",
+      "type": "object",
+      "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "maxHp": { "type": "number" },
+          "currentHp": { "type": "number" },
+          "timeRemaining": { "type": "string" },
+          "lastDefeated": { "type": "string" }
+      }
+    },
+    "Dungeon": {
+        "title": "Dungeon",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "difficulty": { "type": "number" },
+            "challenges": { 
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": { "type": "string" },
+                        "title": { "type": "string" },
+                        "completed": { "type": "boolean" }
+                    },
+                    "required": ["id", "title", "completed"]
+                }
+            },
+            "completed": { "type": "boolean" },
+            "xp": { "type": "number" },
+            "startTime": { "type": "string", "format": "date-time" },
+            "completionTime": { "type": "string", "format": "date-time" },
+            "timeTaken": { "type": "number" }
+        }
+    },
+    "JournalEntry": {
+        "title": "JournalEntry",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "date": { "type": "string", "format": "date-time" },
+            "text": { "type": "string" },
+            "imageUrl": { "type": "string" },
+            "voiceUrl": { "type": "string" }
+        },
+        "required": ["id", "date"]
+    },
+    "WeeklyReview": {
+        "title": "WeeklyReview",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "date": { "type": "string", "format": "date-time" },
+            "weekNumber": { "type": "number" },
+            "year": { "type": "number" },
+            "wins": { "type": "string" },
+            "challenges": { "type": "string" },
+            "learnings": { "type": "string" },
+            "nextWeekGoals": { "type": "string" },
+            "mood": { "type": "string", "enum": ["Great", "Good", "Okay", "Bad", "Awful"] }
+        },
+        "required": ["id", "date", "weekNumber", "year", "mood"]
+    },
+    "Habit": {
+        "title": "Habit",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "category": { "type": "string" },
+            "streak": { "type": "number" },
+            "difficulty": { "type": "string" },
+            "xpReward": { "type": "number" },
+            "coinReward": { "type": "number" },
+            "frequency": { "type": "string" }
+        }
+    },
+    "Challenge": {
+        "title": "Challenge",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "duration": { "type": "number" },
+            "category": { "type": "string" },
+            "difficulty": { "type": "string" },
+            "startDate": { "type": "string", "format": "date-time" },
+            "endDate": { "type": "string", "format": "date-time" },
+            "status": { "type": "string" }
+        }
     },
     "Note": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -104,192 +213,29 @@
       "type": "object",
       "description": "Represents a single note in the Keep-like application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Note entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Note)"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the note."
-        },
-        "content": {
-          "type": "string",
-          "description": "The main content of the note.  Can contain text, lists, or media."
-        },
-        "color": {
-          "type": "string",
-          "description": "The color assigned to the note for visual organization."
-        },
-        "isPinned": {
-          "type": "boolean",
-          "description": "Indicates whether the note is pinned to the top of the view."
-        },
-        "isArchived": {
-          "type": "boolean",
-          "description": "Indicates whether the note is archived."
-        },
-        "reminder": {
-          "type": "string",
-          "description": "Date and time for the note's reminder, if set.",
-          "format": "date-time"
-        },
-        "labelIds": {
-          "type": "array",
-          "description": "References to Labels. (Relationship: Label N:N Note)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the note was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the note was last updated.",
-          "format": "date-time"
-        }
+        "id": { "type": "string" }, "title": { "type": "string" }, "content": { "type": "string" }, "color": { "type": "string" },
+        "isPinned": { "type": "boolean" }, "isArchived": { "type": "boolean" }, "reminder": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }, "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "userId",
-        "title",
-        "content",
-        "color",
-        "isPinned",
-        "isArchived",
-        "createdAt",
-        "updatedAt"
-      ]
-    },
-    "Label": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Label",
-      "type": "object",
-      "description": "Represents a label or tag that can be applied to notes for categorization.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Label entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Label)"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the label."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the label was created.",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "description": "Timestamp indicating when the label was last updated.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "name",
-        "createdAt",
-        "updatedAt"
-      ]
+      "required": ["id", "title", "content", "createdAt", "updatedAt"]
     }
   },
-  "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
-  },
+  "auth": { "providers": ["password", "anonymous"] },
   "firestore": {
     "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Stores user account information.  Path-based ownership ensures only the authenticated user can access their account.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/profiles/{profileId}",
-        "definition": {
-          "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Stores user profile information. Path-based ownership restricts access to the owning user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "profileId",
-              "description": "The unique identifier for the user profile."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/notes/{noteId}",
-        "definition": {
-          "entityName": "Note",
-          "schema": {
-            "$ref": "#/backend/entities/Note"
-          },
-          "description": "Stores notes created by the user. Path-based ownership restricts access to the owning user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "noteId",
-              "description": "The unique identifier for the note."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/labels/{labelId}",
-        "definition": {
-          "entityName": "Label",
-          "schema": {
-            "$ref": "#/backend/entities/Label"
-          },
-          "description": "Stores labels created by the user. Path-based ownership restricts access to the owning user.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "labelId",
-              "description": "The unique identifier for the label."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore data structure is designed to support a Keep-like note-taking application with a gamified RPG twist. The core principle is authorization independence, achieved through path-based ownership for private user data and the avoidance of `get()` calls in security rules. Segregation is used to isolate user data. \n\n*   **Users and Profiles:**  Each user has a dedicated document in the `/users/{userId}` collection with their associated data. The user profile is stored in a subcollection `/users/{userId}/profiles/{profileId}` to reflect the 1:1 relationship. This ensures that profile data is directly associated with the user and access can be controlled based on the current user. Since path-based ownership is applied, access is automatically restricted to the logged-in user.\n*   **Notes:** Notes are stored in a subcollection `/users/{userId}/notes/{noteId}` to leverage path-based ownership. This structure ensures that only the authenticated user can access their notes, simplifying security rules. \n*   **Labels:** Labels are stored in a subcollection `/users/{userId}/labels/{labelId}`. This design provides clear ownership and avoids mixing public and private data.\n\nThis structure enables secure `list` operations (QAPs) because all documents within a collection share the same security requirements.  Path-based ownership ensures that listing notes and labels is restricted to the authenticated user, and no filtering is required in the rules themselves."
+      { "path": "/users/{userId}", "definition": { "entityName": "User", "schema": { "$ref": "#/backend/entities/User" } } },
+      { "path": "/users/{userId}/profiles/{profileId}", "definition": { "entityName": "UserProfile", "schema": { "$ref": "#/backend/entities/UserProfile" } } },
+      { "path": "/users/{userId}/skillTrees/{skillTreeId}", "definition": { "entityName": "SkillTree", "schema": { "$ref": "#/backend/entities/SkillTree" } } },
+      { "path": "/users/{userId}/inventory/{itemId}", "definition": { "entityName": "Item", "schema": { "$ref": "#/backend/entities/Item" } } },
+      { "path": "/users/{userId}/equipment/{equipmentId}", "definition": { "entityName": "Equipment", "schema": { "$ref": "#/backend/entities/Equipment" } } },
+      { "path": "/users/{userId}/tasks/{taskId}", "definition": { "entityName": "Task", "schema": { "$ref": "#/backend/entities/Task" } } },
+      { "path": "/users/{userId}/bosses/{bossId}", "definition": { "entityName": "Boss", "schema": { "$ref": "#/backend/entities/Boss" } } },
+      { "path": "/users/{userId}/dungeons/{dungeonId}", "definition": { "entityName": "Dungeon", "schema": { "$ref": "#/backend/entities/Dungeon" } } },
+      { "path": "/users/{userId}/journal/{entryId}", "definition": { "entityName": "JournalEntry", "schema": { "$ref": "#/backend/entities/JournalEntry" } } },
+      { "path": "/users/{userId}/reviews/{reviewId}", "definition": { "entityName": "WeeklyReview", "schema": { "$ref": "#/backend/entities/WeeklyReview" } } },
+      { "path": "/users/{userId}/habits/{habitId}", "definition": { "entityName": "Habit", "schema": { "$ref": "#/backend/entities/Habit" } } },
+      { "path": "/users/{userId}/challenges/{challengeId}", "definition": { "entityName": "Challenge", "schema": { "$ref": "#/backend/entities/Challenge" } } },
+      { "path": "/users/{userId}/notes/{noteId}", "definition": { "entityName": "Note", "schema": { "$ref": "#/backend/entities/Note" } } }
+    ]
   }
 }
