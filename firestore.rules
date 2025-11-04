@@ -1,0 +1,127 @@
+/**
+ * @fileoverview Firestore Security Rules for LifeQuest RPG and Keep-like Note-Taking App
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model, ensuring that users can only access their own data.
+ *
+ * Data Structure:
+ * All data is nested under /users/{userId}, including profiles, notes, and labels, enabling simple path-based authorization.
+ *
+ * Key Security Decisions:
+ *  - User listing is disallowed to prevent unauthorized enumeration.
+ *  - The rules avoid using `get()` calls for performance and security.
+ *  - Timestamp fields are not validated during this prototyping phase.
+ *  - Data shape is not strictly validated, allowing for flexible schema evolution.
+ *
+ * Denormalization for Authorization:
+ * The data model uses path-based ownership, which directly encodes the user's ID in the document path, avoiding the need to store redundant `userId` fields within the document itself and eliminating the need for `get()` calls.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Protects user account information.
+     * @path /users/{userId}
+     * @allow (create) - If the authenticated user's ID matches the userId.
+     * @allow (get) - If the authenticated user's ID matches the userId.
+     * @allow (list) - Denied to prevent user enumeration.
+     * @allow (update) - If the authenticated user's ID matches the userId and the document exists.
+     * @allow (delete) - If the authenticated user's ID matches the userId and the document exists.
+     * @deny (create) - If the authenticated user's ID does not match the userId.
+     * @deny (get) - If the authenticated user's ID does not match the userId.
+     * @deny (update) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @deny (delete) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @principle Enforces user ownership for all operations on the user document.
+     */
+    match /users/{userId} {
+      allow create: if isSignedIn() && isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if false;
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user profile information.
+     * @path /users/{userId}/profiles/{profileId}
+     * @allow (create) - If the authenticated user's ID matches the userId.
+     * @allow (get) - If the authenticated user's ID matches the userId.
+     * @allow (list) - If the authenticated user's ID matches the userId.
+     * @allow (update) - If the authenticated user's ID matches the userId and the document exists.
+     * @allow (delete) - If the authenticated user's ID matches the userId and the document exists.
+     * @deny (create) - If the authenticated user's ID does not match the userId.
+     * @deny (get) - If the authenticated user's ID does not match the userId.
+     * @deny (list) - If the authenticated user's ID does not match the userId.
+     * @deny (update) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @deny (delete) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @principle Enforces user ownership for all operations on the user profile.
+     */
+    match /users/{userId}/profiles/{profileId} {
+      allow create: if isSignedIn() && isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects notes created by the user.
+     * @path /users/{userId}/notes/{noteId}
+     * @allow (create) - If the authenticated user's ID matches the userId.
+     * @allow (get) - If the authenticated user's ID matches the userId.
+     * @allow (list) - If the authenticated user's ID matches the userId.
+     * @allow (update) - If the authenticated user's ID matches the userId and the document exists.
+     * @allow (delete) - If the authenticated user's ID matches the userId and the document exists.
+     * @deny (create) - If the authenticated user's ID does not match the userId.
+     * @deny (get) - If the authenticated user's ID does not match the userId.
+     * @deny (list) - If the authenticated user's ID does not match the userId.
+     * @deny (update) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @deny (delete) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @principle Enforces user ownership for all operations on the note documents.
+     */
+    match /users/{userId}/notes/{noteId} {
+      allow create: if isSignedIn() && isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects labels created by the user.
+     * @path /users/{userId}/labels/{labelId}
+     * @allow (create) - If the authenticated user's ID matches the userId.
+     * @allow (get) - If the authenticated user's ID matches the userId.
+     * @allow (list) - If the authenticated user's ID matches the userId.
+     * @allow (update) - If the authenticated user's ID matches the userId and the document exists.
+     * @allow (delete) - If the authenticated user's ID matches the userId and the document exists.
+     * @deny (create) - If the authenticated user's ID does not match the userId.
+     * @deny (get) - If the authenticated user's ID does not match the userId.
+     * @deny (list) - If the authenticated user's ID does not match the userId.
+     * @deny (update) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @deny (delete) - If the authenticated user's ID does not match the userId or the document doesn't exist.
+     * @principle Enforces user ownership for all operations on the label documents.
+     */
+    match /users/{userId}/labels/{labelId} {
+      allow create: if isSignedIn() && isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+  }
+}

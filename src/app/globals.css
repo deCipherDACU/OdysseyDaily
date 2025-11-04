@@ -1,0 +1,406 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 228 39% 7%; /* #0B1021 */
+    --foreground: 228 100% 95%; /* #E6E9FF */
+    
+    --card: 228 44% 15%; /* #151B36 */
+    --card-foreground: 228 100% 95%;
+    
+    --popover: 228 39% 7%;
+    --popover-foreground: 228 100% 95%;
+
+    --primary: 250 100% 68%; /* #7C5CFF */
+    --primary-foreground: 228 100% 95%;
+
+    --secondary: 228 44% 15%;
+    --secondary-foreground: 228 100% 95%;
+
+    --muted: 228 44% 15%;
+    --muted-foreground: 228 27% 63%; /* #9AA3C7 */
+    
+    --accent: 250 100% 68%;
+    --accent-foreground: 228 100% 95%;
+    
+    --destructive: 0 100% 67%; /* #FF6B6B */
+    --destructive-foreground: 228 100% 95%;
+    
+    --border: 228 27% 63% / 0.2;
+    --input: 228 44% 15%;
+    --ring: 250 100% 68%;
+    --radius: 0.8rem;
+  }
+
+  .theme-light {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+  }
+
+  .theme-novice {
+    --primary: 262 84% 60%; /* #8B5CF6 */
+    --accent: 258 75% 76%; /* #A78BFA */
+  }
+
+  .theme-warrior {
+      --primary: 0 84% 60%; /* #EF4444 */
+      --accent: 0 91% 71%; /* #F87171 */
+  }
+
+  .theme-mage {
+      --primary: 217 91% 60%; /* #3B82F6 */
+      --accent: 221 83% 69%; /* #60A5FA */
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  .theme-night {
+     background-image: url('/Background/Samurai_Genshin.png');
+     background-size: cover;
+     background-position: center;
+     background-attachment: fixed;
+  }
+
+  .theme-night .firefly-background,
+  .theme-night .firefly-midground,
+  .theme-night .firefly-foreground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  
+  .theme-night .firefly-background { z-index: 1; }
+  .theme-night .firefly-midground { z-index: 5; }
+  .theme-night .firefly-foreground { z-index: 15; }
+
+  .theme-night .firefly {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, #a3e635 0%, #a3e635 30%, #4d7c0f 70%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 
+      0 0 12px #a3e635,
+      0 0 24px #a3e635,
+      0 0 36px #a3e635,
+      0 0 48px rgba(163, 230, 53, 0.6),
+      0 0 72px rgba(163, 230, 53, 0.3);
+    animation: firefly-3d-float 12s infinite ease-in-out,
+               firefly-blink 2s infinite ease-in-out;
+    opacity: 0;
+    filter: blur(0px); /* Remove default blur */
+  }
+
+  .prose {
+    @apply text-foreground text-base max-w-none;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    @apply text-foreground font-headline;
+  }
+  .prose p {
+    @apply leading-7;
+  }
+  .prose a {
+    @apply text-primary underline;
+  }
+  .prose strong {
+    @apply text-foreground;
+  }
+  .prose blockquote {
+    @apply border-l-4 border-primary pl-4 italic text-muted-foreground;
+  }
+  .prose code {
+    @apply bg-muted text-foreground p-1 rounded-sm;
+  }
+  .prose pre {
+    @apply bg-muted p-4 rounded-md;
+  }
+  .prose ul {
+    @apply list-disc list-inside;
+  }
+  .prose ol {
+    @apply list-decimal list-inside;
+  }
+}
+
+/* Enhanced blinking animation */
+@keyframes firefly-blink {
+  0%, 45% {
+    opacity: inherit;
+    box-shadow: 
+      0 0 12px #a3e635,
+      0 0 24px #a3e635,
+      0 0 36px #a3e635,
+      0 0 48px rgba(163, 230, 53, 0.6),
+      0 0 72px rgba(163, 230, 53, 0.3);
+  }
+  50%, 55% {
+    opacity: 0.2;
+    box-shadow: 
+      0 0 6px #a3e635,
+      0 0 12px rgba(163, 230, 53, 0.3);
+  }
+  60%, 100% {
+    opacity: inherit;
+    box-shadow: 
+      0 0 15px #a3e635,
+      0 0 30px #a3e635,
+      0 0 45px #a3e635,
+      0 0 60px rgba(163, 230, 53, 0.7),
+      0 0 90px rgba(163, 230, 53, 0.4);
+  }
+}
+
+/* Enhanced 3D movement with random depth */
+@keyframes firefly-3d-float {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--x-start), 100vh, 0) scale(var(--scale-start));
+  }
+  5% {
+    opacity: var(--opacity-start);
+  }
+  15% {
+    transform: translate3d(calc(var(--x-start) + 20vw), 80vh, 10px) scale(1);
+  }
+  25% {
+    transform: translate3d(calc(var(--x-start) - 15vw), 60vh, -5px) scale(0.9);
+  }
+  35% {
+    transform: translate3d(calc(var(--x-start) + 30vw), 45vh, 15px) scale(1.1);
+  }
+  45% {
+    transform: translate3d(calc(var(--x-start) - 10vw), 30vh, -10px) scale(0.85);
+  }
+  55% {
+    transform: translate3d(calc(var(--x-start) + 25vw), 20vh, 20px) scale(1.2);
+  }
+  65% {
+    transform: translate3d(calc(var(--x-start) - 20vw), 15vh, -15px) scale(0.9);
+  }
+  75% {
+    transform: translate3d(calc(var(--x-start) + 15vw), 10vh, 5px) scale(1);
+  }
+  85% {
+    transform: translate3d(calc(var(--x-start) - 5vw), 5vh, -20px) scale(0.7);
+  }
+  95% {
+    opacity: var(--opacity-end);
+    transform: translate3d(var(--x-end), -10vh, 25px) scale(var(--scale-end));
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--x-end), -20vh, 30px) scale(0.5);
+  }
+}
+
+/* Layer-specific enhancements with minimal blur */
+.theme-night .firefly.background-layer {
+  filter: blur(0.2px); /* Minimal blur */
+  opacity: 0.5;
+  animation-duration: 15s;
+  box-shadow: 
+    0 0 8px #a3e635,
+    0 0 16px #a3e635,
+    0 0 24px rgba(163, 230, 53, 0.4);
+}
+
+.theme-night .firefly.midground-layer {
+  opacity: 0.8;
+  animation-duration: 10s;
+  filter: blur(0px); /* No blur */
+  box-shadow: 
+    0 0 14px #a3e635,
+    0 0 28px #a3e635,
+    0 0 42px #a3e635,
+    0 0 56px rgba(163, 230, 53, 0.6);
+}
+
+.theme-night .firefly.foreground-layer {
+  opacity: 1;
+  animation-duration: 8s;
+  filter: blur(0px) drop-shadow(0 0 8px rgba(163, 230, 53, 0.8));
+  box-shadow: 
+    0 0 16px #a3e635,
+    0 0 32px #a3e635,
+    0 0 48px #a3e635,
+    0 0 64px rgba(163, 230, 53, 0.7),
+    0 0 96px rgba(163, 230, 53, 0.4);
+}
+
+/* Enhanced size variants with intense glow */
+.theme-night .firefly.tiny {
+  width: 2px;
+  height: 2px;
+  box-shadow: 
+    0 0 6px #a3e635,
+    0 0 12px #a3e635,
+    0 0 18px rgba(163, 230, 53, 0.5);
+}
+
+.theme-night .firefly.small {
+  width: 3px;
+  height: 3px;
+  box-shadow: 
+    0 0 10px #a3e635,
+    0 0 20px #a3e635,
+    0 0 30px rgba(163, 230, 53, 0.5);
+}
+
+.theme-night .firefly.large {
+  width: 6px;
+  height: 6px;
+  box-shadow: 
+    0 0 18px #a3e635,
+    0 0 36px #a3e635,
+    0 0 54px #a3e635,
+    0 0 72px rgba(163, 230, 53, 0.6);
+}
+
+.theme-night .firefly.xl {
+  width: 8px;
+  height: 8px;
+  box-shadow: 
+    0 0 24px #a3e635,
+    0 0 48px #a3e635,
+    0 0 72px #a3e635,
+    0 0 96px rgba(163, 230, 53, 0.7),
+    0 0 120px rgba(163, 230, 53, 0.3);
+}
+
+/* Fast blink variant */
+.theme-night .firefly.fast-blink {
+  animation: firefly-3d-float 12s infinite ease-in-out,
+             firefly-fast-blink 1s infinite ease-in-out;
+}
+
+@keyframes firefly-fast-blink {
+  0%, 30% { opacity: inherit; }
+  35%, 40% { opacity: 0.1; }
+  45%, 100% { opacity: inherit; }
+}
+
+/* Slow blink variant */
+.theme-night .firefly.slow-blink {
+  animation: firefly-3d-float 12s infinite ease-in-out,
+             firefly-slow-blink 4s infinite ease-in-out;
+}
+
+@keyframes firefly-slow-blink {
+  0%, 70% { opacity: inherit; }
+  75%, 80% { opacity: 0.2; }
+  85%, 100% { opacity: inherit; }
+}
+
+/* Random pulse variant */
+.theme-night .firefly.pulse {
+  animation: firefly-3d-float 12s infinite ease-in-out,
+             firefly-pulse 3s infinite ease-in-out;
+}
+
+@keyframes firefly-pulse {
+  0%, 50% { 
+    transform: scale(1);
+    opacity: inherit;
+  }
+  25% { 
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  75% { 
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+/* XP/Coin reward themed fireflies */
+.theme-night .firefly.xp-glow {
+  background: radial-gradient(circle, #ffd700 0%, #ffaa00 50%, transparent 70%);
+  box-shadow: 0 0 8px #ffd700, 0 0 16px rgba(255, 215, 0, 0.4);
+}
+
+/* Achievement unlock themed */
+.theme-night .firefly.achievement-glow {
+  background: radial-gradient(circle, #ff6b6b 0%, #ff4757 50%, transparent 70%);
+  box-shadow: 0 0 8px #ff6b6b, 0 0 16px rgba(255, 107, 107, 0.3);
+}
+
+/* Productivity boost themed */
+.theme-night .firefly.boost-glow {
+  background: radial-gradient(circle, #00d4ff 0%, #0099cc 50%, transparent 70%);
+  box-shadow: 0 0 8px #00d4ff, 0 0 16px rgba(0, 212, 255, 0.3);
+}
+
+@layer components {
+    .gradient-glow-button {
+      @apply relative;
+    }
+    .gradient-glow-button::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 150%;
+      height: 250%;
+      background: conic-gradient(from var(--angle), transparent 0%, hsl(var(--primary)) 20%, hsl(var(--accent)) 35%, transparent 60%);
+      filter: blur(40px);
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      animation: rotate-gradient 8s linear infinite;
+    }
+    .gradient-glow-button:hover::before {
+      opacity: 0.5;
+    }
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes rotate-gradient {
+    0% {
+      --angle: 0deg;
+    }
+    100% {
+      --angle: 360deg;
+    }
+  }

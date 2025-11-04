@@ -1,0 +1,295 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user within the LifeQuest RPG application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's chosen username for the app."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp of the user's last login.",
+          "format": "date-time"
+        },
+        "profileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: User 1:1 UserProfile)"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email",
+        "createdAt",
+        "lastLogin",
+        "profileId"
+      ]
+    },
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Stores user profile information, including character details and settings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name within the app."
+        },
+        "avatar": {
+          "type": "string",
+          "description": "URL or reference to the user's avatar image."
+        },
+        "level": {
+          "type": "number",
+          "description": "The user's current level in the game."
+        },
+        "xp": {
+          "type": "number",
+          "description": "The user's current experience points."
+        },
+        "coins": {
+          "type": "number",
+          "description": "The number of coins the user has."
+        },
+        "gems": {
+          "type": "number",
+          "description": "The number of gems the user has (premium currency)."
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "The user's time zone."
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "description": "The user's preferred language."
+        }
+      },
+      "required": [
+        "id",
+        "displayName",
+        "avatar",
+        "level",
+        "xp",
+        "coins",
+        "gems",
+        "timeZone",
+        "preferredLanguage"
+      ]
+    },
+    "Note": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Note",
+      "type": "object",
+      "description": "Represents a single note in the Keep-like application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Note entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Note)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the note."
+        },
+        "content": {
+          "type": "string",
+          "description": "The main content of the note.  Can contain text, lists, or media."
+        },
+        "color": {
+          "type": "string",
+          "description": "The color assigned to the note for visual organization."
+        },
+        "isPinned": {
+          "type": "boolean",
+          "description": "Indicates whether the note is pinned to the top of the view."
+        },
+        "isArchived": {
+          "type": "boolean",
+          "description": "Indicates whether the note is archived."
+        },
+        "reminder": {
+          "type": "string",
+          "description": "Date and time for the note's reminder, if set.",
+          "format": "date-time"
+        },
+        "labelIds": {
+          "type": "array",
+          "description": "References to Labels. (Relationship: Label N:N Note)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the note was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the note was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "content",
+        "color",
+        "isPinned",
+        "isArchived",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Label": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Label",
+      "type": "object",
+      "description": "Represents a label or tag that can be applied to notes for categorization.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Label entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Label)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the label."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the label was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the label was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user account information.  Path-based ownership ensures only the authenticated user can access their account.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/profiles/{profileId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile information. Path-based ownership restricts access to the owning user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "profileId",
+              "description": "The unique identifier for the user profile."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/notes/{noteId}",
+        "definition": {
+          "entityName": "Note",
+          "schema": {
+            "$ref": "#/backend/entities/Note"
+          },
+          "description": "Stores notes created by the user. Path-based ownership restricts access to the owning user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "noteId",
+              "description": "The unique identifier for the note."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/labels/{labelId}",
+        "definition": {
+          "entityName": "Label",
+          "schema": {
+            "$ref": "#/backend/entities/Label"
+          },
+          "description": "Stores labels created by the user. Path-based ownership restricts access to the owning user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "labelId",
+              "description": "The unique identifier for the label."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support a Keep-like note-taking application with a gamified RPG twist. The core principle is authorization independence, achieved through path-based ownership for private user data and the avoidance of `get()` calls in security rules. Segregation is used to isolate user data. \n\n*   **Users and Profiles:**  Each user has a dedicated document in the `/users/{userId}` collection with their associated data. The user profile is stored in a subcollection `/users/{userId}/profiles/{profileId}` to reflect the 1:1 relationship. This ensures that profile data is directly associated with the user and access can be controlled based on the current user. Since path-based ownership is applied, access is automatically restricted to the logged-in user.\n*   **Notes:** Notes are stored in a subcollection `/users/{userId}/notes/{noteId}` to leverage path-based ownership. This structure ensures that only the authenticated user can access their notes, simplifying security rules. \n*   **Labels:** Labels are stored in a subcollection `/users/{userId}/labels/{labelId}`. This design provides clear ownership and avoids mixing public and private data.\n\nThis structure enables secure `list` operations (QAPs) because all documents within a collection share the same security requirements.  Path-based ownership ensures that listing notes and labels is restricted to the authenticated user, and no filtering is required in the rules themselves."
+  }
+}
