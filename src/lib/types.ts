@@ -106,48 +106,6 @@ export type UserPreferences = {
     theme?: 'light' | 'dark';
 }
 
-export type NoteType = 'text' | 'checklist' | 'drawing' | 'audio' | 'image';
-
-export type ChecklistItem = {
-    id: string;
-    text: string;
-    isCompleted: boolean;
-    createdAt: Date;
-};
-
-export type NoteReminder = {
-    id: string;
-    type: 'time' | 'location';
-    dateTime?: Date;
-    location?: string;
-    isActive: boolean;
-};
-
-export type Note = {
-    id: string;
-    title: string;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-    tags?: string[];
-    mood?: string;
-    priority?: number;
-    isPinned?: boolean;
-    isArchived?: boolean;
-    category?: string;
-    color?: string;
-    backgroundImage?: string;
-    type: NoteType;
-    checklistItems?: ChecklistItem[];
-    imageAttachments?: string[];
-    audioPath?: string;
-    drawingData?: string;
-    reminders?: NoteReminder[];
-    collaborators?: string[];
-    metadata?: Record<string, any>;
-    wordCount: number;
-};
-
 export type User = {
   uid: string;
   name: string;

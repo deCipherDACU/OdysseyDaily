@@ -34,7 +34,6 @@ const navGroups = [
       name: "Review",
       items: [
         { href: '/journal', label: 'Journal', icon: Notebook, requiredLevel: 1 },
-        { href: '/notes', label: 'Notes', icon: FileText, requiredLevel: 1 },
         { href: '/weekly-review', label: 'Weekly Review', icon: CalendarCheck, requiredLevel: 1 },
       ]
   },

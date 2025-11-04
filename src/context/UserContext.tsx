@@ -4,14 +4,11 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { mockUser as initialUser, mockTasks as initialTasks, mockBosses, mockAchievements } from '@/lib/data';
-import type { User, RewardItem, Task, Boss, DungeonCrawl, JournalEntry, WeeklyReview, ChatMessage, Item, Equipment, Notification, Debuff, Achievement, Note } from '@/lib/types';
+import type { User, RewardItem, Task, Boss, DungeonCrawl, JournalEntry, WeeklyReview, ChatMessage, Item, Equipment, Notification, Debuff, Achievement } from '@/lib/types';
 import { xpForLevel, calculateTaskXP, calculateTaskCoins } from '@/lib/formulas';
 import { useToast } from '@/hooks/use-toast';
 import { startOfDay, startOfWeek, startOfMonth, isWithinInterval, subHours, isSameDay, getWeek, getYear, subDays, differenceInDays, differenceInSeconds } from 'date-fns';
 import { useUser as useFirebaseUser } from '@/firebase/auth/use-user';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, doc } from 'firebase/firestore';
 
 type UserContextType = {
   user: User | null;
@@ -20,7 +17,6 @@ type UserContextType = {
   dungeons: DungeonCrawl[];
   journalEntries: JournalEntry[];
   weeklyReviews: WeeklyReview[];
-  notes: Note[] | null;
   loading: boolean;
   setUser: (user: User | ((prevUser: User | null) => User | null)) => void;
   addXp: (amount: number) => void;
@@ -50,16 +46,12 @@ type UserContextType = {
   markNotificationAsRead: (notificationId: string) => void;
   markAllNotificationsAsRead: () => void;
   deleteNotification: (notificationId: string) => void;
-  addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt' | 'wordCount'>) => void;
-  updateNote: (updatedNote: Partial<Note> & { id: string }) => void;
-  deleteNote: (noteId: string) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { user: firebaseUser, loading: authLoading } = useFirebaseUser();
-  const { firestore } = useFirestore();
   const [user, setUserState] = useState<User | null>(null);
   const [tasks, setTasksState] = useState<Task[]>([]);
   const [boss, setBossState] = useState<Boss | null>(null);
@@ -68,12 +60,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [weeklyReviews, setWeeklyReviewsState] = useState<WeeklyReview[]>([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const { toast } = useToast();
-
-  const notesCollectionRef = useMemoFirebase(
-    () => (firestore && firebaseUser ? collection(firestore, `users/${firebaseUser.uid}/notes`) : null),
-    [firestore, firebaseUser]
-  );
-  const { data: notes, isLoading: notesLoading } = useCollection<Note>(notesCollectionRef);
 
   const saveData = useCallback((data: { user?: User, tasks?: Task[], boss?: Boss, dungeons?: DungeonCrawl[], journalEntries?: JournalEntry[], weeklyReviews?: WeeklyReview[] }) => {
     const localDataKey = firebaseUser ? `lifequest-data-${firebaseUser.uid}` : 'lifequest-data-guest';
@@ -95,27 +81,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     });
   }, [saveData]);
   
-  const checkAndUnlockAchievements = useCallback((currentUser: User, currentNotes: Note[] | null): number => {
+  const checkAndUnlockAchievements = useCallback((): number => {
+    if (!user) return 0;
     const newlyUnlocked: Achievement[] = [];
-    const userAchievements = currentUser.achievements || [];
+    const userAchievements = user.achievements || [];
     let xpGained = 0;
-
-    const noteCount = currentNotes?.length ?? 0;
-
-    const achievementChecks: { [key: string]: () => boolean } = {
-        'scribe': () => noteCount >= 1,
-        'archivist': () => noteCount >= 10,
-        'loremaster': () => noteCount >= 50,
-        'chronicler': () => noteCount >= 100,
-        'organizer': () => new Set(currentNotes?.flatMap(n => n.tags || [])).size >= 5,
-        'categorizer': () => new Set(currentNotes?.map(n => n.category)).size >= 5,
-        'pinner': () => currentNotes?.some(n => n.isPinned) ?? false,
-    };
 
     mockAchievements.forEach(achievement => {
         if (!userAchievements.find(ua => ua.id === achievement.id)?.unlocked) {
-            if (achievementChecks[achievement.id] && achievementChecks[achievement.id]()) {
-                newlyUnlocked.push({ ...achievement, unlocked: true, unlockedDate: new Date() });
+            // NOTE: This check is now simplified as note-specific achievements are removed.
+            // In a real app, you'd have checks for each achievement's conditions here.
+            // For now, let's just say some achievements are unlocked based on level.
+            if (achievement.id.startsWith('l') && user.level >= (achievement.xp || 0) / 10) {
+                 newlyUnlocked.push({ ...achievement, unlocked: true, unlockedDate: new Date() });
             }
         }
     });
@@ -146,7 +124,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return xpGained;
-  }, [toast, setUser]);
+  }, [user, toast, setUser]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -768,37 +746,6 @@ const deleteNotification = useCallback((notificationId: string) => {
     });
 }, [setUser]);
 
-const addNote = useCallback((noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt' | 'wordCount'>) => {
-    if (!notesCollectionRef) return;
-    const now = new Date();
-    const newNote: Omit<Note, 'id'> = {
-        ...noteData,
-        createdAt: now,
-        updatedAt: now,
-        wordCount: noteData.content.split(/\s+/).length,
-    };
-    addDocumentNonBlocking(notesCollectionRef, newNote);
-    const xpFromAchievements = user ? checkAndUnlockAchievements(user, notes) : 0;
-    addXp(10 + xpFromAchievements);
-    toast({ title: "Note Created!", description: "You earned +10 XP!", variant: "success" });
-}, [notesCollectionRef, toast, addXp, user, notes, checkAndUnlockAchievements]);
-
-
-const updateNote = useCallback((updatedNote: Partial<Note> & { id: string }) => {
-    if (!notesCollectionRef) return;
-    const noteRef = doc(notesCollectionRef, updatedNote.id);
-    const updateData = { ...updatedNote, updatedAt: new Date() };
-    delete updateData.id;
-    updateDocumentNonBlocking(noteRef, updateData);
-}, [notesCollectionRef]);
-
-const deleteNote = useCallback((noteId: string) => {
-    if (!notesCollectionRef) return;
-    const noteRef = doc(notesCollectionRef, noteId);
-    deleteDocumentNonBlocking(noteRef);
-    toast({ title: "Note Deleted", variant: "destructive" });
-}, [notesCollectionRef, toast]);
-
 
 const contextValue = useMemo(() => ({
     user, 
@@ -807,8 +754,7 @@ const contextValue = useMemo(() => ({
     dungeons,
     journalEntries,
     weeklyReviews,
-    notes,
-    loading: authLoading || !isDataLoaded || notesLoading,
+    loading: authLoading || !isDataLoaded,
     setUser,
     setBoss,
     dealBossDamage,
@@ -837,10 +783,7 @@ const contextValue = useMemo(() => ({
     markNotificationAsRead,
     markAllNotificationsAsRead,
     deleteNotification,
-    addNote,
-    updateNote,
-    deleteNote,
-  }), [user, tasks, boss, dungeons, journalEntries, weeklyReviews, notes, authLoading, isDataLoaded, notesLoading, setUser, setBoss, dealBossDamage, addXp, addCoins, redeemReward, getRedeemedCount, addGems, addTask, updateTask, deleteTask, addJournalEntry, deleteJournalEntry, incrementJournalDeletionCount, levelUpSkill, addDungeon, updateDungeon, toggleChallengeCompleted, startDungeon, completeDungeon, addWeeklyReview, addCustomReward, deleteCustomReward, equipItem, addNotification, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification, addNote, updateNote, deleteNote]);
+  }), [user, tasks, boss, dungeons, journalEntries, weeklyReviews, authLoading, isDataLoaded, setUser, setBoss, dealBossDamage, addXp, addCoins, redeemReward, getRedeemedCount, addGems, addTask, updateTask, deleteTask, addJournalEntry, deleteJournalEntry, incrementJournalDeletionCount, levelUpSkill, addDungeon, updateDungeon, toggleChallengeCompleted, startDungeon, completeDungeon, addWeeklyReview, addCustomReward, deleteCustomReward, equipItem, addNotification, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification]);
 
   return (
     <UserContext.Provider value={contextValue}>

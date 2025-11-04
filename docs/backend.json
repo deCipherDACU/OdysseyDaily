@@ -206,18 +206,6 @@
             "endDate": { "type": "string", "format": "date-time" },
             "status": { "type": "string" }
         }
-    },
-    "Note": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Note",
-      "type": "object",
-      "description": "Represents a single note in the Keep-like application.",
-      "properties": {
-        "id": { "type": "string" }, "title": { "type": "string" }, "content": { "type": "string" }, "color": { "type": "string" },
-        "isPinned": { "type": "boolean" }, "isArchived": { "type": "boolean" }, "reminder": { "type": "string", "format": "date-time" },
-        "createdAt": { "type": "string", "format": "date-time" }, "updatedAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["id", "title", "content", "createdAt", "updatedAt"]
     }
   },
   "auth": { "providers": ["password", "anonymous"] },
@@ -234,8 +222,7 @@
       { "path": "/users/{userId}/journal/{entryId}", "definition": { "entityName": "JournalEntry", "schema": { "$ref": "#/backend/entities/JournalEntry" } } },
       { "path": "/users/{userId}/reviews/{reviewId}", "definition": { "entityName": "WeeklyReview", "schema": { "$ref": "#/backend/entities/WeeklyReview" } } },
       { "path": "/users/{userId}/habits/{habitId}", "definition": { "entityName": "Habit", "schema": { "$ref": "#/backend/entities/Habit" } } },
-      { "path": "/users/{userId}/challenges/{challengeId}", "definition": { "entityName": "Challenge", "schema": { "$ref": "#/backend/entities/Challenge" } } },
-      { "path": "/users/{userId}/notes/{noteId}", "definition": { "entityName": "Note", "schema": { "$ref": "#/backend/entities/Note" } } }
+      { "path": "/users/{userId}/challenges/{challengeId}", "definition": { "entityName": "Challenge", "schema": { "$ref": "#/backend/entities/Challenge" } } }
     ]
   }
 }
