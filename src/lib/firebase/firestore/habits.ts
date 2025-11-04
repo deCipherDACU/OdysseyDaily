@@ -82,7 +82,6 @@ export const completeHabit = async (
     );
     
     const newStreak = hasYesterdayCompletion ? (habit.streak || 0) + 1 : 1;
-    const newLongestStreak = Math.max(habit.streak || 0, newStreak);
     
     const completion: HabitCompletion = {
       date,
@@ -93,7 +92,6 @@ export const completeHabit = async (
     
     const data = {
       streak: newStreak,
-      longestStreak: newLongestStreak,
       completionHistory: completionHistory,
       updatedAt: new Date(),
     };
@@ -141,8 +139,7 @@ export const updateChallengeProgress = async (
   db: Firestore,
   userId: string, 
   challengeId: string, 
-  date: string, 
-  completed: boolean
+  date: string, _completed: boolean
 ) => {
   const challengeDoc = doc(challengesCollection(db, userId), challengeId);
   try {
@@ -156,7 +153,7 @@ export const updateChallengeProgress = async (
       ...challenge.progress,
       dailyCompletions: {
         ...challenge.progress.dailyCompletions,
-        [date]: completed
+        [date]: _completed
       }
     };
     
