@@ -1,0 +1,38 @@
+.adhd-mode .sidebar {
+  display: none;
+}
+
+.adhd-mode .header {
+  display: none;
+}
+
+.adhd-mode .main-content {
+  padding: 1rem;
+}
+
+.adhd-mode .quest-list {
+  border: none;
+}
+
+.adhd-mode .quest-item {
+  margin-bottom: 0.5rem;
+}
+
+.adhd-mode .progress-bar {
+  display: block;
+  width: 100%;
+  height: 1rem;
+  background-color: #eee;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.adhd-mode .progress-bar-fill {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 0.5rem;
+}
+
+.focus-mode .main-content > *:not(.quest-list) {
+  display: none;
+}

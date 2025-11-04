@@ -18,6 +18,7 @@ import { LiquidGlassButton } from "@/components/ui/LiquidGlassButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import { AiRecommendations } from "@/components/dashboard/AiRecommendations";
+import { CharacterPreview } from "@/components/dashboard/CharacterPreview";
 
 export default function DashboardPage() {
   const { user, tasks, boss, loading } = useUser();
@@ -58,12 +59,32 @@ export default function DashboardPage() {
   const completedDailyTasks = dailyTasks.filter(t => t.completed).length;
   const dailyProgress = dailyTasks.length > 0 ? (completedDailyTasks / dailyTasks.length) * 100 : 0;
 
+  const [focusMode, setFocusMode] = useState(false);
+
+  useEffect(() => {
+    if (focusMode) {
+      document.body.classList.add('focus-mode');
+    } else {
+      document.body.classList.remove('focus-mode');
+    }
+  }, [focusMode]);
+
   return (
     <>
+      <div className="progress-bar">
+        <div
+          className="progress-bar-fill"
+          style={{ width: `${dailyProgress}%` }}
+        ></div>
+      </div>
       <PageHeader
         title={`Welcome Back, ${user.name.split(' ')[0]}!`}
         description="Here's your progress summary. Let's make today productive!"
-      />
+      >
+        <button onClick={() => setFocusMode(!focusMode)}>
+          {focusMode ? 'Disable Focus Mode' : 'Enable Focus Mode'}
+        </button>
+      </PageHeader>
 
         <div className="grid gap-4 md:grid-cols-3 mb-6">
             <LiquidGlassCard className="flex items-center gap-4 p-4">
@@ -112,6 +133,7 @@ export default function DashboardPage() {
 
         {/* Right column */}
         <div className="lg:col-span-1 space-y-6">
+          <CharacterPreview />
           <LiquidGlassCard>
             <div className="p-6">
               <h3 className="font-headline flex items-center gap-2 font-semibold text-white"><BookOpen className="h-5 w-5 text-primary" /> Upcoming Quests</h3>

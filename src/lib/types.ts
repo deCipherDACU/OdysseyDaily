@@ -104,6 +104,7 @@ export type UserPreferences = {
     soundEffects?: boolean;
     backgroundMusic?: boolean;
     theme?: 'light' | 'dark';
+    adhdMode?: boolean;
 }
 
 export type NoteType = 'text' | 'checklist' | 'drawing' | 'audio' | 'image';

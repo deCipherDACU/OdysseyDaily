@@ -157,7 +157,7 @@ export default function TasksPage() {
             </Popover>
         </div>
         
-        <TabsContent value="today" className="space-y-2 mt-4">
+        <TabsContent value="today" className="quest-list space-y-2 mt-4">
           {!isClient ? (
             <div className="space-y-2">
                 <Skeleton className="w-full h-24" />
@@ -170,7 +170,7 @@ export default function TasksPage() {
             <p className="text-muted-foreground text-center py-4">No quests for today. Add one or enjoy your break!</p>
           )}
         </TabsContent>
-        <TabsContent value="week" className="space-y-4 mt-4">
+        <TabsContent value="week" className="quest-list space-y-4 mt-4">
           {!isClient ? (
              <div className="space-y-6">
                 <Skeleton className="w-full h-36" />
@@ -195,7 +195,7 @@ export default function TasksPage() {
             </div>
           )}
         </TabsContent>
-        <TabsContent value="all" className="space-y-2 mt-4">
+        <TabsContent value="all" className="quest-list space-y-2 mt-4">
           {!isClient ? (
             <div className="space-y-2">
                 <Skeleton className="w-full h-24" />
@@ -208,7 +208,7 @@ export default function TasksPage() {
              <p className="text-muted-foreground text-center py-4">Your quest log is empty. Great job!</p>
           )}
         </TabsContent>
-        <TabsContent value="completed" className="space-y-2 mt-4">
+        <TabsContent value="completed" className="quest-list space-y-2 mt-4">
            {completedTasks.map(task => (
              <TaskItem key={task.id} task={task} />
           ))}
