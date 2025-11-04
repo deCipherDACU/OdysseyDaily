@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import '../adhd-mode.css';
 import {
   LayoutGrid, BookOpen, GitMerge, User, Trophy, ShoppingBag, CalendarCheck, Notebook, CalendarDays, Timer, Wind, Sword, Bot, Bell, FileText, Plus, Waves, Shield
 } from 'lucide-react';
@@ -67,18 +68,30 @@ function AppLayout({
 
     const unreadNotifications = user?.notifications?.filter(n => !n.read).length || 0;
 
+    React.useEffect(() => {
+        if (user?.preferences?.adhdMode) {
+            document.body.classList.add('adhd-mode');
+        } else {
+            document.body.classList.remove('adhd-mode');
+        }
+    }, [user?.preferences?.adhdMode]);
+
     return (
         <>
             <div className="flex min-h-screen w-full">
-                <AppSidebar
-                    navGroups={navGroups}
-                    pathname={pathname}
-                    userLevel={user?.level ?? 1}
-                    unreadNotifications={unreadNotifications}
-                />
+                <div className="sidebar">
+                    <AppSidebar
+                        navGroups={navGroups}
+                        pathname={pathname}
+                        userLevel={user?.level ?? 1}
+                        unreadNotifications={unreadNotifications}
+                    />
+                </div>
                 <div className="flex flex-1 flex-col">
-                    <Header />
-                    <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                    <div className="header">
+                        <Header />
+                    </div>
+                    <main className="main-content flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                         {loading ? (
                             <>
                                 <Skeleton className="h-8 w-64 mb-4" />

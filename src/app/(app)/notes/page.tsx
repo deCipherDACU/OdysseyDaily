@@ -18,7 +18,9 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 
-type ViewMode = 'grid' | 'list';
+import { MindMap } from '@/components/notes/MindMap';
+
+type ViewMode = 'grid' | 'list' | 'mindmap';
 
 export default function NotesPage() {
     const { user, notes: initialNotes, addNote, updateNote, deleteNote, loading } = useUser();
@@ -143,6 +145,7 @@ export default function NotesPage() {
                     <div className="flex items-center gap-1 bg-black/20 p-1 rounded-md">
                         <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('grid')}><LayoutGrid /></Button>
                         <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('list')}><List /></Button>
+                        <Button variant={viewMode === 'mindmap' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('mindmap')}><span>🧠</span></Button>
                     </div>
                 </div>
             </div>
@@ -178,6 +181,8 @@ export default function NotesPage() {
             )}
 
             {isCreateDialogOpen && <CreateNoteDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} onCreate={addNote} />}
+
+            {viewMode === 'mindmap' && <MindMap notes={notes} />}
         </>
     );
 }

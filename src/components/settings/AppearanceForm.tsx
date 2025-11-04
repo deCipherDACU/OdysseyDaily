@@ -29,6 +29,7 @@ import { Separator } from "../ui/separator"
 const appearanceFormSchema = z.object({
   appTheme: z.enum(["novice", "warrior", "mage"]),
   theme: z.enum(["light", "dark"]),
+  adhdMode: z.boolean(),
 })
 
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
@@ -41,13 +42,15 @@ const themes = [
 
 export function AppearanceForm() {
   const { toast } = useToast()
-  const { user, setUser } = useUser();
+  const { user, setUser, addXp, addCoins } = useUser();
+  const [rewardedForAdhdMode, setRewardedForAdhdMode] = React.useState(false);
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: {
       appTheme: "novice",
       theme: user?.preferences?.theme || 'dark',
+      adhdMode: user?.preferences?.adhdMode || false,
     },
   })
 
@@ -76,7 +79,17 @@ export function AppearanceForm() {
 
   function onSubmit(data: AppearanceFormValues) {
     if (user) {
-        setUser({ ...user, preferences: { ...user.preferences, theme: data.theme }});
+        if (data.adhdMode && !user.preferences?.adhdMode && !rewardedForAdhdMode) {
+            addXp(10);
+            addCoins(5);
+            setRewardedForAdhdMode(true);
+            toast({
+                title: "Focus Activated!",
+                description: "You earned 10 XP and 5 Coins for trying out ADHD mode.",
+                variant: "success",
+            });
+        }
+        setUser({ ...user, preferences: { ...user.preferences, theme: data.theme, adhdMode: data.adhdMode }});
     }
 
     toast({
@@ -111,6 +124,26 @@ export function AppearanceForm() {
                                     <Switch
                                         checked={field.value === 'dark'}
                                         onCheckedChange={(checked) => field.onChange(checked ? 'dark' : 'light')}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                        />
+                    <FormField
+                        control={form.control}
+                        name="adhdMode"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-primary/10 border-primary/20">
+                                <div className="space-y-0.5">
+                                    <FormLabel className="text-base text-white">ADHD Mode</FormLabel>
+                                    <FormDescription>
+                                        Enable a simplified UI with focus-enhancing features.
+                                    </FormDescription>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
                                     />
                                 </FormControl>
                             </FormItem>

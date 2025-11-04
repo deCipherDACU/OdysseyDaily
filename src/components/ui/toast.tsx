@@ -12,32 +12,38 @@ const toastVariants = {
   default: {
     Icon: Info,
     iconClass: "text-blue-400",
-    glowClass: "glow-blue"
+    glowClass: "glow-blue",
+    sound: "/sounds/default.mp3"
   },
   success: {
     Icon: Check,
     iconClass: "text-green-400",
-    glowClass: "glow-green"
+    glowClass: "glow-green",
+    sound: "/sounds/success.mp3"
   },
   destructive: {
     Icon: TriangleAlert,
     iconClass: "text-red-400",
-    glowClass: "glow-red"
+    glowClass: "glow-red",
+    sound: "/sounds/destructive.mp3"
   },
   levelUp: {
     Icon: TrendingUp,
     iconClass: "text-yellow-400",
-    glowClass: "glow-yellow"
+    glowClass: "glow-yellow",
+    sound: "/sounds/level-up.mp3"
   },
   questComplete: {
     Icon: Swords,
     iconClass: "text-primary",
-    glowClass: "glow-primary"
+    glowClass: "glow-primary",
+    sound: "/sounds/quest-complete.mp3"
   },
   newItem: {
     Icon: Shield,
     iconClass: "text-purple-400",
-    glowClass: "glow-purple"
+    glowClass: "glow-purple",
+    sound: "/sounds/new-item.mp3"
   }
 };
 
@@ -53,12 +59,19 @@ export interface ToastProps
   onDismiss: (toastId: string) => void;
 }
 
+import { useSound } from "@/hooks/use-sound";
+
 const Toast = React.forwardRef<
   HTMLDivElement,
   ToastProps
 >(({ className, variant = 'default', id, title, description, duration = 5000, onDismiss, ...props }, ref) => {
 
-  const { Icon, iconClass, glowClass } = toastVariants[variant] || toastVariants.default;
+  const { Icon, iconClass, glowClass, sound } = toastVariants[variant] || toastVariants.default;
+  const playSound = useSound(sound);
+
+  React.useEffect(() => {
+    playSound();
+  }, [playSound]);
   
   React.useEffect(() => {
     if(duration === Infinity) return;
