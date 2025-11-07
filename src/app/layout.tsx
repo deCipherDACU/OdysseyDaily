@@ -1,18 +1,26 @@
 'use client';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Inter } from 'next/font/google';
+import { Poppins, Space_Grotesk } from 'next/font/google';
 import { Providers } from '@/app/providers';
 import { Fireflies } from '@/components/layout/Fireflies';
 import { useUser } from '@/context/UserContext';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-poppins',
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-space-grotesk',
+});
+
 
 function AppBody({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
@@ -20,7 +28,7 @@ function AppBody({ children }: { children: React.ReactNode }) {
 
   return (
       <body className={cn(
-        `${inter.variable} font-display antialiased`,
+        `${poppins.variable} ${spaceGrotesk.variable} font-body antialiased`,
         isNightMode ? 'theme-night' : 'theme-light'
       )} suppressHydrationWarning>
         <>

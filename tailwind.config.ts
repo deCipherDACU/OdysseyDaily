@@ -91,11 +91,51 @@ export default {
             height: '0',
           },
         },
+        shimmer: {
+          '0%': { transform: 'translateX(-200%)' },
+          '100%': { transform: 'translateX(200%)' }
+        },
+        'liquid-wave': {
+          '0%, 100%': { 
+            transform: 'translateX(-100%) translateY(-100%) rotate(0deg)' 
+          },
+          '50%': { 
+            transform: 'translateX(0%) translateY(0%) rotate(180deg)' 
+          }
+        },
+        'glass-float': {
+          '0%, 100%': { 
+            transform: 'translateY(0px) rotate(0deg)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
+          },
+          '50%': { 
+            transform: 'translateY(-10px) rotate(1deg)',
+            boxShadow: '0 30px 60px rgba(0, 0, 0, 0.15)'
+          }
+        },
+        'bubble-float': {
+          '0%, 100%': {
+            transform: 'translateY(0px) scale(1)',
+            opacity: '0.7',
+          },
+          '50%': {
+            transform: 'translateY(-20px) scale(1.2)',
+            opacity: '0.3',
+          }
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'liquid-wave': 'liquid-wave 4s ease-in-out infinite',
+        'glass-float': 'glass-float 6s ease-in-out infinite',
+        'bubble-float': 'bubble-float 4s ease-in-out infinite',
       },
+      backdropBlur: {
+        xs: '2px',
+        xl: '24px',
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
