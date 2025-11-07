@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import React from 'react';
@@ -47,9 +46,8 @@ const navGroups = [
       ]
   },
   {
-      name: "Habits & Challenges",
+      name: "Game",
       items: [
-          { href: '/habits', label: 'Habits & Challenges', icon: BookOpen, requiredLevel: 1 },
           { href: '/boss-fight', label: 'Boss Fight', icon: Sword, requiredLevel: 1 },
           { href: '/notifications', label: 'Notifications', icon: Bell, requiredLevel: 1 }
       ]
