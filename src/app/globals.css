@@ -87,9 +87,9 @@
   }
   
   .theme-night {
-    background: linear-gradient(160deg, #071428, #0B1021),
-                radial-gradient(1200px 520px at 80% -10%, rgba(124, 92, 255, 0.15), transparent),
-                radial-gradient(900px 480px at 10% 110%, rgba(60, 165, 250, 0.15), transparent);
+    background: linear-gradient(160deg, rgba(17, 17, 17, 0.96), rgba(17, 17, 17, 0.88)),
+                radial-gradient(1200px 520px at 80% -10%, rgba(168, 85, 247, 0.18), transparent),
+                radial-gradient(900px 480px at -10% 100%, rgba(56, 189, 248, 0.18), transparent);
     background-attachment: fixed;
   }
 
@@ -404,4 +404,5 @@
       --angle: 360deg;
     }
   }
+
 
