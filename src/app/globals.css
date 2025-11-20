@@ -87,10 +87,10 @@
   }
   
   .theme-night {
-     background-image: url('/Background/Samurai_Genshin.png');
-     background-size: cover;
-     background-position: center;
-     background-attachment: fixed;
+    background: linear-gradient(160deg, #071428, #0B1021),
+                radial-gradient(1200px 520px at 80% -10%, rgba(124, 92, 255, 0.15), transparent),
+                radial-gradient(900px 480px at 10% 110%, rgba(60, 165, 250, 0.15), transparent);
+    background-attachment: fixed;
   }
 
   .theme-night .firefly-background,
